@@ -1,4 +1,5 @@
 ///
+const { promises } = require("dns");
 const http = require("http");
 const fs = require("fs").promises;
 const path = require("path");
@@ -30,7 +31,9 @@ class FileServer {
         try{
 
             if(method === "GET" && pathname === "/"){
-                
+                const html = await fs.readFile("index.html", "utf-8");
+                res.writeHead(200, {"Content-Type": "text/html"});
+                res.end(html);
             }
 
         }catch(error){
@@ -40,6 +43,12 @@ class FileServer {
         }
 
     }
+
+    async listFiles(res) {
+        try{
+            const files = await fs.readdir("./");
+        }
+    } 
 }
 
 const server = new FileServer(3000)
