@@ -8,7 +8,7 @@ const url = require("url");
 
 class FileServer {
 
-    constructor(port){
+    constructor(port = 3000){
         this.port = port;
         this.server = null;
     }
@@ -68,6 +68,55 @@ class FileServer {
             })
         }
     } 
+
+    async readFile(res, fileName){
+        try{
+            const data = await fs.readFile(fileName, "utf8");
+            res.writeHead(200, {"Content": "text/plain"});
+            res.end(data);
+        }catch(error){
+            this.sendResponse(res, 404, {error:"File not found"});
+        }
+    } 
+
+    async createFile(req, res){
+        try{
+             let body = ' ';
+             req.on('data', chunk => body = body + chunk);
+             req.on('end', async () =>{
+                try{
+                    const {fileName, Content} = JSON.parse(body);
+                    await fs.writeFile(fileName, Content || "", "utf8");
+                    this.sendResponse(res, 201, {message: "File created successfully"})
+                }catch(error){
+                    this.sendResponse(res, 500, {error: "Error creting file."})
+                }
+             })
+        }catch(error){
+             this.sendResponse(res, 404, {error:"File not found"});
+        }
+    }
+
+    async deleteFile(res, fileName) {
+        try{
+            await fs.unlink(fileName);
+             this.sendResponse(res, 200, {message: "File delete successfully"})
+        }catch(error){
+            this.sendResponse(res, 500, {error: "Error dleting file"})
+        }
+    }
+
+    sendResponse(res, statusCode, data) {
+        res.writeHead(statusCode, {"Content-Type": "application/json"});
+        res.end(JSON.stringify(data));
+    }
+
+    start(){
+        this.server = http.createServer((req, res) => this.handleRequest(req, res));
+        this.server.listen(this.port, () =>{
+            console.log(`Server is running on port ${this.port}`)
+        })
+    }
 
 }
 
