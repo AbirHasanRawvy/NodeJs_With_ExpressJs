@@ -68,6 +68,9 @@ class FileServer {
             })
         }
     } 
+
 }
 
 const server = new FileServer(3000)
+
+///All the methods are developed;
