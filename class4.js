@@ -122,4 +122,6 @@ class FileServer {
 
 const server = new FileServer(3000)
 
+server.start();
+
 ///All the methods are developed;
