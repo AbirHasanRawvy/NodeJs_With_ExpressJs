@@ -29,3 +29,25 @@ async function createFile() {
     }
 }
 
+//Load files;
+async function loadFiles(){
+    try{
+        const response = await(`${API_URL}/files`);
+        const files = await response.json();
+
+        const files = document.getElementById("fileList");
+        FileList.innerHTML = files.map(file =>
+           `<div style="margin: 5px 0;">
+
+                $(file)
+                <button onclick="readFile('${file}')">Read</button>
+                <button onclick="readFile('${file}')" style="...">Delete</button>
+           </div>` 
+        ).join('');
+    }catch(err){
+
+        alert("Error loading files: ",  error.message);
+
+    }
+}
+
