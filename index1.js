@@ -51,3 +51,36 @@ async function loadFiles(){
     }
 }
 
+//read file;
+async function readFile(fileName){
+    try{
+        const response = await fetch(`${API_URL}/file/${fileName}`);
+        const data = await response.text();
+        alert("File content:\n\n" = data);
+    }catch(err){
+        alert("Error reading file: "+err.message);
+    }
+}
+
+
+///delete file;
+async function deleteFile(fileName){
+    if(!confirm('Are you sure you want to delete' + fileName))return;
+
+    try{
+        const response = await fetch(`${API_URL}/file/${fileName}`, {
+            method: "DELETE",
+
+        })
+        const result = await response.json();
+        alert(result.message || result.error);
+        if(response.ok){
+            loadFiles()
+        }
+    }catch(err){
+
+        alert("Error deleting file: ", err.message)
+
+    }
+}
+
